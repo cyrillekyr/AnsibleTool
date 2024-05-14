@@ -4,17 +4,15 @@
 afficher_menu_principal() {
     clear
     echo "
-  ______                                  ______                       __  __        __           
- /      \                                /      \                     |  \|  \      |  \          
-|  $$$$$$\  ______    ______  __     __ |  $$$$$$\ _______    _______  \$$| $$____  | $$  ______  
-| $$___\$$ /      \  /      \|  \   /  \| $$__| $$|       \  /       \|  \| $$    \ | $$ /      \ 
- \$$    \ |  $$$$$$\|  $$$$$$\\$$\ /  $$| $$    $$| $$$$$$$\|  $$$$$$$| $$| $$$$$$$\| $$|  $$$$$$\
- _\$$$$$$\| $$    $$| $$   \$$ \$$\  $$ | $$$$$$$$| $$  | $$ \$$    \ | $$| $$  | $$| $$| $$    $$
-|  \__| $$| $$$$$$$$| $$        \$$ $$  | $$  | $$| $$  | $$ _\$$$$$$\| $$| $$__/ $$| $$| $$$$$$$$
- \$$    $$ \$$     \| $$         \$$$   | $$  | $$| $$  | $$|       $$| $$| $$    $$| $$ \$$     \
-  \$$$$$$   \$$$$$$$ \$$          \$     \$$   \$$ \$$   \$$ \$$$$$$$  \$$ \$$$$$$$  \$$  \$$$$$$$                                                                                                  
+#####                          #                                         
+#     # ###### #####  #    #   # #   #    #  ####  # #####  #      ###### 
+#       #      #    # #    #  #   #  ##   # #      # #    # #      #      
+ #####  #####  #    # #    # #     # # #  #  ####  # #####  #      #####  
+      # #      #####  #    # ####### #  # #      # # #    # #      #      
+#     # #      #   #   #  #  #     # #   ## #    # # #    # #      #      
+ #####  ###### #    #   ##   #     # #    #  ####  # #####  ###### ######                                                                                         
                                                                                                   
-                                                                                                  
+                                                                                               
 "
 
     echo "Bienvenue dans l'outil d'automatisation de gestion de serveurs avec Ansible"
@@ -40,7 +38,7 @@ executer_action() {
     case $choix in
         1) deployer_utilisateur ;;
         2) supprimer_utilisateur ;;
-        3) creer_groupe ;;
+        3) ajouter_groupe ;;
         4) supprimer_groupe ;;
         5) deployer_machine ;;
         6) supprimer_machine ;;
@@ -55,6 +53,86 @@ executer_action() {
 }
 
 # Fonctions pour implémenter les actions
+
+
+
+# Deploy a user 
+
+
+deployer_utilisateur() {
+    clear
+    echo "Déployer une machine"
+
+    # Demander à l'utilisateur de fournir le chemin d'un fichier ou utiliser le fichier par défaut
+    echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'machine.yml') : "
+    read -r fichier_machine_path
+
+    # Vérifier si l'utilisateur a fourni un chemin de fichier ou utiliser le fichier par défaut
+    if [ -z "$fichier_machine_path" ]; then
+        fichier_machine="playbooks/utilisateurs_groupes.yaml"
+    else
+        fichier_machine="$fichier_machine_path"
+    fi
+
+    # Vérifier si le fichier machine existe
+    if [ -f "$fichier_machine" ]; then
+        # Vérifier si le fichier est au format spécifié
+        if grep -q "utilisateurs:" "$fichier_machine" && grep -q "nom:" "$fichier_machine" && grep -q "groupes:" "$fichier_machine"; then
+            # Exécuter le playbook Ansible avec le fichier machine
+
+            echo "L'utilisateur a été déployée avec succès."
+        else
+            echo "Le fichier '$fichier_machine' n'est pas au format spécifié."
+        fi
+    else
+        echo "Le fichier '$fichier_machine' n'existe pas."
+    fi
+}
+
+
+
+
+
+
+
+
+
+# Add a group
+ajouter_groupe() {
+    clear
+
+    # Demander à l'utilisateur de saisir le nom du groupe
+    echo -n "Veuillez saisir le nom du groupe à ajouter (séparez les noms par des espaces si plusieurs) : "
+    read -r group_names
+
+    # Écraser le contenu du fichier YAML avec les nouveaux groupes
+    echo "groupes :" > playbooks/groupes.yml
+    for group in $group_names; do
+        echo "  - $group" >> playbooks/groupes.yml
+    done
+    echo "Le fichier YAML 'groupes.yml' a été mis à jour avec les nouveaux groupes."
+}
+
+# Delete a group 
+
+supprimer_groupe() {
+    clear
+
+    # Demander à l'utilisateur de saisir le nom du groupe
+    echo -n "Veuillez saisir le nom du groupe à supprimer (séparez les noms par des espaces si plusieurs) : "
+    read -r group_names
+
+    # Écraser le contenu du fichier YAML avec les nouveaux groupes
+    echo "groupes :" > playbooks/groupes.yml
+    for group in $group_names; do
+        echo "  - $group" >> playbooks/groupes.yml
+    done
+    echo "Le fichier YAML 'groupes.yml' a été mis à jour avec les nouveaux groupes."
+}
+
+
+
+
 
 #deployer_utilisateur() {
     # Logique pour déployer un utilisateur
