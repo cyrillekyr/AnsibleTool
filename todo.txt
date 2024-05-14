@@ -1,0 +1,39 @@
+Architecture  : 
+
+
+playbooks 
+hosts
+scripts
+main.sh
+
+Playbooks  : 
+	Déployer un utilisateur
+	Supprimer un user
+	Créer un groupe
+	Supprimer un groupe
+	Déployer une machine
+	Supprimer une machine
+	
+
+Hosts
+	all_hosts
+	lan_hosts
+	wan_hosts
+	dmz hosts
+	custom_hosts
+	
+
+
+scripts
+	ajouter un host
+	ajouter un playbook
+	Supprimer un playbook
+	mettre à jour un host
+	faire l'inventaire dynamique
+
+Le script main.sh sera l'interface qui sera affiché à l'admin système et lui permettra d'effectuer les différentes taches.
+On pourrait lui afficher différentes options dès le lancement du script  : Tu sauras comment modéliser et comment architecturer pour une bonne exp user. 
+Au lancement on doit avoir une jolie présentation 
+	
+	
+	
