@@ -89,13 +89,38 @@ deployer_utilisateur() {
     fi
 }
 
+# Remove a user
 
+supprimer_utilisateur() {
+    clear
+    echo "Supprimer une machine"
 
+    # Demander à l'utilisateur de fournir le chemin d'un fichier ou utiliser le fichier par défaut
+    echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'machine.yml') : "
+    read -r fichier_machine_path
 
+    # Vérifier si l'utilisateur a fourni un chemin de fichier ou utiliser le fichier par défaut
+    if [ -z "$fichier_machine_path" ]; then
+        fichier_machine="playbooks/utilisateurs_groupes.yaml"
+    else
+        fichier_machine="$fichier_machine_path"
+    fi
 
+    # Vérifier si le fichier machine existe
+    if [ -f "$fichier_machine" ]; then
+        # Vérifier si le fichier est au format spécifié
+        if grep -q "utilisateurs:" "$fichier_machine" && grep -q "nom:" "$fichier_machine" && grep -q "groupes:" "$fichier_machine"; then
+            # Exécuter le playbook Ansible avec le fichier machine
 
+            echo "L'utilisateur a été supprimé avec succès."
+        else
+            echo "Le fichier '$fichier_machine' n'est pas au format spécifié."
+        fi
+    else
+        echo "Le fichier '$fichier_machine' n'existe pas."
+    fi
 
-
+}
 
 # Add a group
 ajouter_groupe() {
@@ -111,10 +136,50 @@ ajouter_groupe() {
         echo "  - $group" >> playbooks/groupes.yml
     done
     echo "Le fichier YAML 'groupes.yml' a été mis à jour avec les nouveaux groupes."
+
+    inventaire="hosts/inventory.yaml"
+    echo "Cible : "
+    echo "1- Serveurs spécifiques"
+    echo "2- Spécifier un fichier d'inventaire"
+    echo "3- Utiliser le fichier par défaut (inventory.yaml)"
+    echo -n "Votre choix : "
+    read -r choix_cible
+
+    case $choix_cible in
+        1)
+            # Demander à l'utilisateur de spécifier les serveurs spécifiques
+            echo -n "Veuillez spécifier les serveurs spécifiques (séparés par des virgules) : "
+            read -r serveurs_specifiques
+            echo $serveurs_specifiques
+            # Action
+            echo "La machine a été déployée avec succès."
+            ;;
+        2)
+            # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
+            echo -n "Veuillez fournir le chemin du fichier d'inventaire : "
+            read -r fichier_inventaire
+            if [ -f "$fichier_inventaire" ]; then
+
+                # Action
+                echo "Le groupe a été crée succès."
+            else   
+                echo "Le fichier spécifié n'existe pas"
+            fi
+            ;;
+        3)
+            cat $inventaire
+            #Action
+            echo "Le groupe a été crée avec succès."
+            ;;
+        *)
+            echo "Choix invalide. Arret."
+                    ;;
+    esac
+
+
 }
 
 # Delete a group 
-
 supprimer_groupe() {
     clear
 
@@ -129,6 +194,9 @@ supprimer_groupe() {
     done
     echo "Le fichier YAML 'groupes.yml' a été mis à jour avec les nouveaux groupes."
 }
+
+
+#Deploy a machine
 
 
 

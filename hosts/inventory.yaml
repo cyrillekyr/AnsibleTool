@@ -1,0 +1,19 @@
+
+[LAN]
+ssham.tettrix.infra ansible_host=192.168.1.103
+sysadmin-rebond.tettrix.infra ansible_host=192.168.1.104
+gitlab.tettrix.infra ansible_host=192.168.1.105
+sysadmin-test.tettrix.infra ansible_host=192.168.1.107
+todo.tettrix.infra ansible_host=192.168.1.108
+affine-pro.tettrix.infra ansible_host=192.168.1.109
+sentinel.tettrix.infra ansible_host=192.168.1.111
+dev.tettrix.infra ansible_host=192.168.3.2
+dev-rebond.tettrix.infra ansible_host=192.168.1.112
+[DMZ]
+passbolt.tettrix.infra ansible_host=10.10.10.101
+jitsi.tettrix.infra ansible_host=10.10.10.106
+pre-prod.tettrix.infra ansible_host=10.10.20.2
+
+[ALL:children]
+LAN
+DMZ
