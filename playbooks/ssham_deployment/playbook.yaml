@@ -1,0 +1,27 @@
+
+- name:  SSHAM deployment
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Copy script.sh on all servers
+      copy:
+        src: /root/scripts/ansible/deployment_machines/load-key.sh
+        dest: /root/load-key.sh
+        mode: 0755
+    - name: Copy of ssham  key
+      copy:
+        src: /root/scripts/ansible/deployment_machines/ssham-key
+        dest: /root/ssham-key
+
+    - name: Execute the script
+      shell: /root/load-key.sh
+
+    - name: Deletion of  load-key.sh
+      file:
+        path: /root/load-key.sh
+        state: absent
+    - name: Delete  ssham-key
+      file:
+        path: /root/ssham-key
+        state: absent

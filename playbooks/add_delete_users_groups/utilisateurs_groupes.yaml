@@ -1,0 +1,12 @@
+utilisateurs:
+  - nom: test1
+    groupes:
+      - testgroup1
+  - nom: test2
+    groupes:
+      - testgroup1
+      - testgroup2
+groupes:
+  - nom: testgroup1
+  - nom: testgroup2
+  

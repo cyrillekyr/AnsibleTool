@@ -1,0 +1,72 @@
+- name: Ajouter les utilisateurs
+  user:
+    name: "{{ item.nom }}"
+    state: present
+  with_items: "{{ utilisateurs }}"
+
+- name: Ajouter les utilisateurs aux groupes
+  user:
+    name: "{{ item.nom }}"
+    groups: "{{ item.groupes }}"
+    append: yes
+  loop: "{{ utilisateurs_groupes.utilisateurs }}"
+  when: action == 'adduser'
+
+- name: Copier le fichier ssham-key sur le serveur
+  copy:
+    src: "/root/scripts/ansible/deployment_machines/ssham-key"
+    dest: "/root/ssham-key"
+  when: action == 'adduser'
+
+- name: Copier un fichier pour l'utilisateur
+  copy:
+    src: "/root/scripts/ansible/bashrc_deployment/.bashrc"
+    dest: "/home/{{ item.nom }}/"
+  with_items: "{{ utilisateurs }}"
+  when: action == 'adduser'
+
+- name: Modifier le shell de l'utilisateur
+  command: usermod -s /bin/bash "{{ item.nom }}"
+  with_items: "{{ utilisateurs }}"
+  when: action == 'adduser'
+
+- name: Configurer les clés SSH pour les utilisateurs
+  become: yes
+  become_user: root
+  block:
+    - name: Créer le répertoire .ssh pour tous les utilisateurs
+      file:
+        path: "/home/{{ item.nom }}/.ssh"
+        state: directory
+      loop: "{{ utilisateurs }}"
+      when: action == 'adduser'
+
+    - name: Définir les permissions sur .ssh pour tous les utilisateurs
+      file:
+        path: "/home/{{ item.nom }}/.ssh"
+        owner: "{{ item.nom }}"
+        group: "{{ item.nom }}"
+        mode: '0700'
+      loop: "{{ utilisateurs }}"
+      when: action == 'adduser'
+
+    - name: Ajouter le contenu de ssham-key à authorized_keys pour tous les utilisateurs
+      shell: echo $(cat /root/ssham-key)   >>  /home/{{ item.nom }}/.ssh/authorized_keys
+      loop: "{{ utilisateurs }}"
+      when: action == 'adduser'
+
+    - name: Définir les permissions sur authorized_keys pour tous les utilisateurs
+      file:
+        path: "/home/{{ item.nom }}/.ssh/authorized_keys"
+        owner: "{{ item.nom }}"
+        group: "{{ item.nom }}"
+        mode: '0600'
+      loop: "{{ utilisateurs }}"
+      when: action == 'adduser'
+
+    - name: Supprimer le fichier temporaire ssham-key
+      file:
+        path: "/root/ssham-key"
+        state: absent
+  when: action == 'adduser'
+

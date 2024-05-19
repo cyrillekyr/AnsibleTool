@@ -1,0 +1,15 @@
+---
+- name: Supprimer les utilisateurs des groupes
+  user:
+    name: "{{ item.nom }}"
+    groups: "{{ item.groupes }}"
+    append: no
+  loop: "{{ utilisateurs_groupes.utilisateurs }}"
+  when: action == 'deluser'
+
+- name: Supprimer les utilisateurs
+  user:
+    name: "{{ item.nom }}"
+    state: absent
+    remove: yes
+  with_items: "{{ utilisateurs }}"

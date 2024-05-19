@@ -1,0 +1,29 @@
+---
+- name: Install Zabbix Agent 2 and transfer a file
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Install Zabbix Agent 2
+      package:
+        name: zabbix-agent2
+        state: present
+      notify:
+        - restart zabbix-agent2
+
+    - name: Ensure Zabbix Agent 2 service is started and enabled
+      service:
+        name: zabbix-agent2
+        state: started
+        enabled: true
+
+    - name: Transfer a file to the remote machine
+      copy:
+        src: zabbix_agent2.conf
+        dest: /etc/zabbix/zabbix_agent2.conf
+
+  handlers:
+    - name: restart zabbix-agent2
+      service:
+        name: zabbix-agent2
+        state: restarted

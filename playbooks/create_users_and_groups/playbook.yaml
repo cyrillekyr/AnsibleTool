@@ -1,0 +1,189 @@
+- name: Add users and groups
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Add groups
+      group:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - sysadmin
+        - dev
+        - dexploit
+
+    - name: Add users
+      user:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - m.zanda
+        - d.allognon
+        - j.afouda
+        - k.adossou
+        - f.agbona
+        - e.kandji
+        - c.assogba
+        - h.sottin
+        - sysadmin
+        - dev
+        - dexploit
+
+    - name: Add users to groups
+      user:
+        name: "{{ item.user }}"
+        groups: "{{ item.groups }}"
+        append: yes
+      loop:
+        - { user: m.zanda, groups: sysadmin }
+        - { user: h.sottin, groups: sysadmin }
+        - { user: m.zanda, groups: dev }
+        - { user: h.sottin, groups: dev }
+        - { user: c.assogba, groups: sysadmin }
+        - { user: e.kandji, groups: sysadmin }
+        - { user: f.agbona, groups: dev }
+        - { user: k.adossou, groups: dev }
+        - { user: j.afouda, groups: sysadmin }
+        - { user: d.allognon, groups: dev }
+        - { user: sysadmin, groups: dexploit }
+        - { user: dev, groups: dexploit }
+
+- name: Change shell from sh to bash
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Copy change_shell.sh file
+      copy:
+        src: /root/scripts/ansible/create_users_and_groups/change_shell.sh
+        dest: /root/change_shell.sh
+        mode: 0755
+
+    - name: Execution of  script
+      shell: /root/change_shell.sh
+
+    - name: Deletion of  script change_shell.sh
+      file:
+        path: /root/change_shell.sh
+        state: absent
+
+- name: Install sudo
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Install  sudo
+      package:
+        name: sudo
+        state: present
+
+
+- name: Set up sudo rights
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Copy the script sudovi
+      copy:
+        src: /root/scripts/ansible/create_users_and_groups/sudovi-user.sh
+        dest: /root/sudovi-user.sh
+        mode: 0755
+
+    - name: Execution of script
+      shell: /root/sudovi-user.sh
+
+    - name: Deletion of script from remote machine
+      file:
+        path: /root/sudovi-user.sh
+        state: absent
+
+- name: Install Zabbix Agent 2 and transfer a file
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Install Zabbix Agent 2
+      package:
+        name: zabbix-agent2
+        state: present
+      notify:
+        - restart zabbix-agent2
+
+    - name: Ensure Zabbix Agent 2 service is started and enabled
+      service:
+        name: zabbix-agent2
+        state: started
+        enabled: true
+
+    - name: Transfer a file to the remote machine
+      copy:
+        src: /root/scripts/ansible/zabbix_deployment/zabbix_agent2.conf
+        dest: /etc/zabbix/zabbix_agent2.conf
+
+  handlers:
+    - name: restart zabbix-agent2
+      service:
+        name: zabbix-agent2
+        state: restarted
+
+- name:  SSHAM deployment
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Copy script.sh on all servers
+      copy:
+        src: /root/scripts/ansible/deployment_machines/load-key.sh
+        dest: /root/load-key.sh
+        mode: 0755
+    - name: Copy of ssham  key
+      copy:
+        src: /root/scripts/ansible/deployment_machines/ssham-key
+        dest: /root/ssham-key
+
+    - name: Execute the script
+      shell: /root/load-key.sh
+
+    - name: Deletion of  load-key.sh
+      file:
+        path: /root/load-key.sh
+        state: absent
+    - name: Delete  ssham-key
+      file:
+        path: /root/ssham-key
+        state: absent
+
+
+- name: Bashrc improvement 
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Copy  load_bashrc.sh  on all servers
+      copy:
+        src: /root/scripts/ansible/deployment_machines/load_bashrc.sh
+        dest: /root/load_bashrc.sh
+        mode: 0755
+
+    - name: Copy .bashrc on all servers
+      copy:
+        src: /root/scripts/ansible/deployment_machines/.bashrc
+        dest: /root/.bashrc
+        mode: 0755
+
+    - name: Execute the script 
+      shell: /root/load_bashrc.sh
+
+    - name: Del
+      file:
+        path: /root/load_bashrc.sh
+        state: absent
+
+- name: Permit to non-root to execute ping
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Execute the command
+      command: setcap cap_net_raw+p /usr/bin/ping
+      register: command_output

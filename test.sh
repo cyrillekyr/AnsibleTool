@@ -61,7 +61,7 @@ executer_action() {
 
 deployer_utilisateur() {
     clear
-    echo "Déployer une machine"
+    echo "Déployer un utilisateur"
 
     # Demander à l'utilisateur de fournir le chemin d'un fichier ou utiliser le fichier par défaut
     echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'machine.yml') : "
@@ -310,6 +310,48 @@ supprimer_groupe() {
 
 
 #Deploy a machine
+deployer_machine() {
+    clear
+    echo "Déployer une machine"
+
+    inventaire="hosts/inventory.yaml"
+    echo "Cible : "
+    echo "1- Serveurs spécifiques"
+    echo "2- Spécifier un fichier d'inventaire"
+    echo "3- Utiliser le fichier par défaut (inventory.yaml)"
+    echo -n "Votre choix : "
+    read -r choix_cible
+
+    case $choix_cible in
+            1)
+                # Demander à l'utilisateur de spécifier les serveurs spécifiques
+                echo -n "Veuillez spécifier les serveurs spécifiques (séparés par des virgules) : "
+                read -r serveurs_specifiques
+                echo $serveurs_specifiques
+                # Action
+                echo "La machine a été déployée avec succès."
+                ;;
+            2)
+                # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
+                echo -n "Veuillez fournir le chemin du fichier d'inventaire : "
+                read -r fichier_inventaire
+                if [ -f "$fichier_inventaire" ]; then
+                    # Action
+                    echo "Le groupe a été crée succès."
+                else   
+                    echo "Le fichier spécifié n'existe pas"
+                fi
+                ;;
+            3)
+                cat $inventaire
+                #Action
+                echo "Le groupe a été crée avec succès."
+                ;;
+            *)
+                echo "Choix invalide. Arret."
+                        ;;
+    esac
+}
 
 
 

@@ -1,0 +1,18 @@
+- name: Mise en place des droits sudo
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Copier le script sudovi
+      copy:
+        src: /root/scripts/ansible/create_users_and_groups/sudovi-user.sh
+        dest: /root/sudovi-user.sh
+        mode: 0755
+
+    - name: Execution du script
+      shell: /root/sudovi-user.sh
+
+    - name: Suppression du script de la machine distante
+      file:
+        path: /root/sudovi-user.sh
+        state: absent
