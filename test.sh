@@ -28,6 +28,7 @@ afficher_menu_principal() {
     echo "9. Delete a playbook"
     echo "10. Update a host"
     echo "11. Dynamic inventory"
+    echo "12. Settings"
     echo "0. Quit"
     echo -n "Select a number: "
 }
@@ -47,6 +48,7 @@ executer_action() {
         9) supprimer_playbook ;;
         10) mettre_a_jour_hote ;;
         11) faire_inventaire ;;
+        12) settings ;;
         0) exit ;;
         *) echo "Choix invalide. Veuillez sélectionner une option valide." ;;
     esac
@@ -64,7 +66,7 @@ deployer_utilisateur() {
     echo "Déployer un utilisateur"
 
     # Demander à l'utilisateur de fournir le chemin d'un fichier ou utiliser le fichier par défaut
-    echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'machine.yml') : "
+    echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'utilisateurs_groupes.yml') : "
     read -r fichier_machine_path
 
     # Vérifier si l'utilisateur a fourni un chemin de fichier ou utiliser le fichier par défaut
@@ -329,7 +331,7 @@ deployer_machine() {
                 read -r serveurs_specifiques
                 echo $serveurs_specifiques
                 # Action
-                echo "La machine a été déployée avec succès."
+                echo "L'opération a été réalisée avec succès."
                 ;;
             2)
                 # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
@@ -337,7 +339,7 @@ deployer_machine() {
                 read -r fichier_inventaire
                 if [ -f "$fichier_inventaire" ]; then
                     # Action
-                    echo "Le groupe a été crée succès."
+                    echo "L'opération a été réalisée avec succès."
                 else   
                     echo "Le fichier spécifié n'existe pas"
                 fi
@@ -345,7 +347,7 @@ deployer_machine() {
             3)
                 cat $inventaire
                 #Action
-                echo "Le groupe a été crée avec succès."
+                echo "L'operation a été réalisée avec succès "
                 ;;
             *)
                 echo "Choix invalide. Arret."
@@ -357,10 +359,94 @@ deployer_machine() {
 
 
 
-#deployer_utilisateur() {
-    # Logique pour déployer un utilisateur
-#}
+deployer_utilisateur() {
+    clear
+    echo "Déployer un utilisateur" 
 
+}
+
+settings() {
+    clear
+    echo "  Aministration Panel"
+
+    echo "1. Playbooks Settings"
+    echo "2. Inventory settings"
+    echo "3. Customization"
+    read -r choix
+
+    case $choix in  
+        1)
+            echo "1. List and describe all playbooks"
+            echo "2. Add a playbook"
+            echo "3. Delete a playbook"
+            echo "4. Update a playbook"
+            read -r case1
+
+            case $case1 in
+                1)
+                    bash scripts/list_and_describe_playbooks.sh
+                    ;;
+                2) 
+                    ;;
+                3)
+                    ;;
+                4)
+                    ;;
+                
+            esac
+
+            ;;
+
+
+        2)
+            echo "1. List inventory hosts"
+            echo "2. Check hosts availability"
+            echo "3. Add a host"
+            echo "4. Delete a host" 
+            echo "5. Update a host"
+
+            read -r case2
+
+            case $case1 in 
+                1)
+                    cat hosts/inventory.yaml 
+                    echo \n
+                    ;;
+
+                2)
+                    bash scripts/host_availibility_checker.sh
+                    ;;
+
+                3) 
+                    ;;
+
+                4)
+                    ;;
+
+                5)
+                    ;;
+
+            esac
+
+
+
+            
+            ;;
+
+
+        3)
+            #Add custom functions here
+            ;;
+
+        *)
+            echo  "Invalid choice, Arret"
+            ;;
+
+    esac
+
+
+    
+}
 #supprimer_utilisateur() {
     # Logique pour supprimer un utilisateur
 #}

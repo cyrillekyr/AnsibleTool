@@ -34,6 +34,22 @@ scripts
 Le script main.sh sera l'interface qui sera affiché à l'admin système et lui permettra d'effectuer les différentes taches.
 On pourrait lui afficher différentes options dès le lancement du script  : Tu sauras comment modéliser et comment architecturer pour une bonne exp user. 
 Au lancement on doit avoir une jolie présentation 
+
+
+
+Fonctionnalités : 
+	- On pourra ajouter et supprimer un ou plusierus utilisateurs et groupes
+	- On pourra déployer une machine
+	- On pourra faire l'inventaire dynamique
+	- Vérifier la disponibilité d'une ou des machines de l'inventaire 
+
+
+	Administration : 
+		- Action sur les hosts et les playbooks  : modifier, supprimer, ajouter
+		- On pourra créer des playbooks personnalisés  :
+
+
+	
 	
 	
 	
