@@ -63,7 +63,7 @@ executer_action() {
 
 deployer_utilisateur() {
     clear
-    echo "Déployer un utilisateur"
+    echo "Déployer un utilisateur" 
 
     # Demander à l'utilisateur de fournir le chemin d'un fichier ou utiliser le fichier par défaut
     echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'utilisateurs_groupes.yml') : "
@@ -96,7 +96,9 @@ deployer_utilisateur() {
                     read -r serveurs_specifiques
                     echo $serveurs_specifiques
                     # Action
-                    echo "La machine a été déployée avec succès."
+                    ansible-playbook -i $serveurs_specifiques, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+
+                    echo "L'utilisateur a été déployé avec succès."
                     ;;
                 2)
                     # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
@@ -105,14 +107,18 @@ deployer_utilisateur() {
                     if [ -f "$fichier_inventaire" ]; then
 
                         # Action
-                        echo "Le groupe a été crée succès."
+                        ansible-playbook -i $fichier_inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+
+                        echo "L'utilisateur a été créé succès."
                     else   
                         echo "Le fichier spécifié n'existe pas"
                     fi
                     ;;
                 3)
-                    cat $inventaire
+                    
                     #Action
+                    ansible-playbook -i $inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+
                     echo "Le groupe a été crée avec succès."
                     ;;
                 *)
@@ -132,10 +138,10 @@ deployer_utilisateur() {
 
 supprimer_utilisateur() {
     clear
-    echo "Supprimer une machine"
+    echo "Delete a user"
 
     # Demander à l'utilisateur de fournir le chemin d'un fichier ou utiliser le fichier par défaut
-    echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'machine.yml') : "
+    echo -n "Veuillez fournir le chemin du fichier contenant les informations de déploiement (laissez vide pour utiliser le fichier par défaut 'utilisateurs_groupes.yaml') : "
     read -r fichier_machine_path
 
     # Vérifier si l'utilisateur a fourni un chemin de fichier ou utiliser le fichier par défaut
@@ -203,14 +209,16 @@ ajouter_groupe() {
     clear
 
     # Demander à l'utilisateur de saisir le nom du groupe
-    echo -n "Veuillez saisir le nom du groupe à ajouter (séparez les noms par des espaces si plusieurs) : "
+    echo -n "Veuillez saisir le nom du groupe à ajouter (séparez les noms par des virgules si plusieurs) : "
     read -r group_names
 
     # Écraser le contenu du fichier YAML avec les nouveaux groupes
-    echo "groupes :" > playbooks/groupes.yml
-    for group in $group_names; do
-        echo "  - $group" >> playbooks/groupes.yml
+    echo "groupes:" > playbooks/groupes.yml
+    IFS=',' read -ra groups <<< "$group_names"
+    for group in "${groups[@]}"; do
+        echo "  - nom: $group" >> playbooks/groupes.yml
     done
+
     echo "Le fichier YAML 'groupes.yml' a été mis à jour avec les nouveaux groupes."
 
     inventaire="hosts/inventory.yaml"
@@ -264,10 +272,12 @@ supprimer_groupe() {
     read -r group_names
 
     # Écraser le contenu du fichier YAML avec les nouveaux groupes
-    echo "groupes :" > playbooks/groupes.yml
-    for group in $group_names; do
-        echo "  - $group" >> playbooks/groupes.yml
+    echo "groupes:" > playbooks/groupes.yml
+    IFS=',' read -ra groups <<< "$group_names"
+    for group in "${groups[@]}"; do
+        echo "  - nom: $group" >> playbooks/groupes.yml
     done
+
     echo "Le fichier YAML 'groupes.yml' a été mis à jour avec les nouveaux groupes."
     inventaire="hosts/inventory.yaml"
     echo "Cible : "
@@ -356,14 +366,50 @@ deployer_machine() {
 }
 
 
+supprimer_machine() {
+        clear
+    echo "Supprimer une machine"
 
+    inventaire="hosts/inventory.yaml"
+    echo "Cible : "
+    echo "1- Serveurs spécifiques"
+    echo "2- Spécifier un fichier d'inventaire"
+    echo "3- Utiliser le fichier par défaut (inventory.yaml)"
+    echo -n "Votre choix : "
+    read -r choix_cible
 
-
-deployer_utilisateur() {
-    clear
-    echo "Déployer un utilisateur" 
+    case $choix_cible in
+            1)
+                # Demander à l'utilisateur de spécifier les serveurs spécifiques
+                echo -n "Veuillez spécifier les serveurs spécifiques (séparés par des virgules) : "
+                read -r serveurs_specifiques
+                echo $serveurs_specifiques
+                # Action
+                echo "L'opération a été réalisée avec succès."
+                ;;
+            2)
+                # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
+                echo -n "Veuillez fournir le chemin du fichier d'inventaire : "
+                read -r fichier_inventaire
+                if [ -f "$fichier_inventaire" ]; then
+                    # Action
+                    echo "L'opération a été réalisée avec succès."
+                else   
+                    echo "Le fichier spécifié n'existe pas"
+                fi
+                ;;
+            3)
+                cat $inventaire
+                #Action
+                echo "L'operation a été réalisée avec succès "
+                ;;
+            *)
+                echo "Choix invalide. Arret."
+                        ;;
+    esac
 
 }
+
 
 settings() {
     clear
@@ -447,9 +493,7 @@ settings() {
 
     
 }
-#supprimer_utilisateur() {
-    # Logique pour supprimer un utilisateur
-#}
+
 
 # Ajoutez les autres fonctions pour les actions restantes
 

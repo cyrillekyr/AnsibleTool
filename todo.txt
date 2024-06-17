@@ -40,6 +40,7 @@ Au lancement on doit avoir une jolie présentation
 Fonctionnalités : 
 	- On pourra ajouter et supprimer un ou plusierus utilisateurs et groupes
 	- On pourra déployer une machine
+	- On pourra executer un playbook particulier
 	- On pourra faire l'inventaire dynamique
 	- Vérifier la disponibilité d'une ou des machines de l'inventaire 
 
@@ -51,5 +52,27 @@ Fonctionnalités :
 
 	
 	
+A faire :
 	
-	
+- Faire un playbook qui va permettre de remettre une machine à l'etat 0
+- Faire en sorte d'avoir un playbook qui permet d'annuler l'action d'un playbook executé
+
+
+
+Scénarios : 
+	- Pour ajouter ou supprimer un utilisateur 
+		on demande un fichier au format utilisateurs_groupes.yaml , ce dernier est utilisé par defaut
+		on demande le serveurs cibles 
+		le playbook est executé
+
+	- Pour ajouter ou supprimer un groupe 
+		on demande un fichier au format groupes.yaml , ce dernier est utilisé par defaut
+		on demande le serveurs cibles 
+		le playbook est executé
+
+	- Pour paramétrer un nouveau serveur ou le remettre à zero
+		On demande le serveur cible
+		On execute l'action
+
+
+	- 
