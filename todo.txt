@@ -56,7 +56,13 @@ A faire :
 	
 - Faire un playbook qui va permettre de remettre une machine à l'etat 0
 - Faire en sorte d'avoir un playbook qui permet d'annuler l'action d'un playbook executé
-
+- Changer les options.
+	    Spécifier une ou des cibles spécifiques
+   	    Spécifier un groupe de cible
+                Spécifier toutes les machines
+- Intégrer les groups vars
+- Adopter une architecture scalable
+- Intégrer une option Inventaire à part entière.
 
 
 Scénarios : 
