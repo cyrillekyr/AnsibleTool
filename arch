@@ -1,0 +1,39 @@
+ansible_project/
+├── ansible.cfg
+├── inventories/
+│   ├── production/
+│   │   ├── hosts
+│   │   └── group_vars/
+│   │       ├── all.yml
+│   │       └── specific_group.yml
+│   ├── staging/
+│   │   ├── hosts
+│   │   └── group_vars/
+│   │       ├── all.yml
+│   │       └── specific_group.yml
+│   └── dynamic/
+│       ├── dynamic_inventory_script.py
+├── roles/
+│   ├── common/
+│   │   ├── tasks/
+│   │   ├── templates/
+│   │   ├── files/
+│   │   └── vars/
+│   ├── templates/
+│   │   ├── tasks/
+│   │   ├── templates/
+│   │   ├── files/
+│   │   └── vars/
+│   └── servers/
+│       ├── tasks/
+│       ├── templates/
+│       ├── files/
+│       └── vars/
+├── playbooks/
+│   ├── site.yml
+│   ├── deploy_webserver.yml
+│   ├── deploy_database.yml
+│   └── rollback.yml
+├── vault/
+│   └── secrets.yml
+└── README.md
