@@ -34,6 +34,9 @@ ansible_project/
 │   ├── deploy_webserver.yml
 │   ├── deploy_database.yml
 │   └── rollback.yml
+├── scripts/
+│   ├── main.sh
+│   ├── dynamic_inventory.sh
 ├── vault/
 │   └── secrets.yml
 └── README.md
