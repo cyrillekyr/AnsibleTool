@@ -62,10 +62,10 @@ esac
 
 main() {
     while true; do
-        afficher_menu_principal
-        executer_action
+        display_princal_menu
+        execute_action
         echo ""
-        echo -n "Appuyez sur Entrée pour revenir au menu principal..."
+        echo -n "Press enter to comme back to principal menu..."
         read input
     done
 }
