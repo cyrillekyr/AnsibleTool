@@ -37,7 +37,8 @@ display_princal_menu()
 
 execute_action()
 {
-    read choice
+    echo ""
+    read -r choice
 
     case $choice in
     1) ./subscripts/add_user.sh ;;
@@ -66,7 +67,7 @@ main() {
         execute_action
         echo ""
         echo -n "Press enter to comme back to principal menu..."
-        read input
+        read -r input
     done
 }
 
