@@ -1,5 +1,9 @@
 #!/bin/bash
 
+source config.sh
+
+
+
 # Display welcome message
 
 display_princal_menu()
@@ -18,7 +22,7 @@ display_princal_menu()
                                                                                                 
     "
 
-
+    
     echo "Please select an option:"
     echo "1. Add a user"
     echo "2. Remove a user"

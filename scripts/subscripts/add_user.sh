@@ -1,8 +1,12 @@
 #! /bin/bash
 
-deployer_utilisateur() {
+source config.sh
+
+
+
+deployer_user() {
     clear
-    echo "Add a user ...." 
+    echo "Add a user ...."
 
     # Demander à l'utilisateur de fournir le chemin d'un fichier ou utiliser le fichier par défaut
     echo "Please select an option"
@@ -62,37 +66,75 @@ deployer_utilisateur() {
             case $target in
                 1)
                     # Demander à l'utilisateur de spécifier les serveurs spécifiques
-                    echo -n "Veuillez spécifier les serveurs spécifiques (séparés par des virgules) : "
-                    read -r serveurs_specifiques
-                    echo $serveurs_specifiques
+                    echo -n "Please specify the specific servers (comma separated): "
+                    read -r servers
+                    echo "$servers"
                     # Action
-                    ansible-playbook -i $serveurs_specifiques, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+                    ansible-playbook -i "$servers", playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
 
-                    echo "L'utilisateur a été déployé avec succès."
+                    echo "Deployment successfull !!!"
                     ;;
                 2)
                     # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
-                    echo -n "Veuillez fournir le chemin du fichier d'inventaire : "
-                    read -r fichier_inventaire
-                    if [ -f "$fichier_inventaire" ]; then
+                    echo "Please specify the node  : "
+                    nodes=$(ls "$INVENTORIES/nodes")
+                    i=1
+                    for node in $nodes
+                    do
+                        echo "$i- $node"
+                        ((i++))
+                    done
 
-                        # Action
-                        ansible-playbook -i $fichier_inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+                    read -r nd 
+                    i=1
+                    for node in $nodes
+                    do
+                        if [ $i -eq "$nd" ]; then
+                            active_node=$node
+                            break
+                        fi
+                        ((i++))
+                    done
 
-                        echo "L'utilisateur a été créé succès."
-                    else   
-                        echo "Le fichier spécifié n'existe pas"
-                    fi
+                    echo  "($active_node) Please specify the group"
+                    echo  "1-($active_node) LAN"
+                    echo  "2-($active_node) DMZ"
+                    echo  "3-($active_node) WAN"
+                    echo  "4-($active_node) ALL"
+
+                    read -r choice
+                    case $choice in
+                        1)
+                            echo "Deployment on $active_node LAN" 
+
+                            ;;
+                        2)
+                            echo "Deployment on $active_node DMZ" 
+                            ;;
+                        3)
+                            echo "Deployment on $active_node WAN" 
+                            ;;
+                        4)
+                            echo "Deployment on all servers of $active_node " 
+                            ;;
+                        *)
+                            echo "Invalid choice"
+                        ;;
+                    esac
+
                     ;;
+
+                    
+                 
                 3)
                     
                     #Action
-                    ansible-playbook -i $inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+                    #ansible-playbook -i $inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
 
-                    echo "Le groupe a été crée avec succès."
+                    echo "Deployment successful"
                     ;;
                 *)
-                    echo "Choix invalide. Arret."
+                    echo "Invalid choice"
                             ;;
             esac
             
@@ -100,9 +142,9 @@ deployer_utilisateur() {
             echo "The file '$user_groups_file' has invalid format"
         fi
     else
-        echo "Le fichier '$fichier_machine' n'existe pas."
+        echo "The $user_groups_file doesn't exist."
     fi
 }
 
 
-deployer_utilisateur
+deployer_user
