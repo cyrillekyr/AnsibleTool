@@ -1,0 +1,24 @@
+- name: Copier le script, Executer, Supprimer
+  hosts: all
+  become: true
+  remote_user: root
+  tasks:
+    - name: Copier le script.sh sur toutes les machines
+      copy:
+        src: /root/scripts/ansible/bashrc_deployment/load_bashrc.sh
+        dest: /root/load_bashrc.sh
+        mode: 0755
+        
+    - name: Copier le script.sh sur toutes les machines
+      copy:
+        src: /root/scripts/ansible/bashrc_deployment/.bashrc
+        dest: /root/.bashrc
+        mode: 0755
+
+    - name: Executer le script
+      shell: /root/load_bashrc.sh
+
+    - name: Del
+      file:
+        path: /root/load_bashrc.sh
+        state: absent

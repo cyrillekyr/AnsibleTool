@@ -1,0 +1,57 @@
+
+#ansible-playbook -i votre_machine, create_users_groups.yaml --extra-vars "action=add utilisateurs_groupes_file=/chemin/vers/votre/fichier/utilisateurs_groupes.yaml"
+
+---
+- name: Manage users and groups
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Check if the action is valid
+      fail:
+        msg: "L'action doit être 'add[user-group]' ou 'del[user-group]'."
+      when: action != 'adduser' and action != 'addgroup' and action != 'deluser' and action != 'delgroup'
+
+    - name: Read the users group file
+      include_vars:
+        file: "{{ utilisateurs_groupes_file }}"
+        name: utilisateurs_groupes
+
+    - name: Check users
+      shell: "getent passwd {{ item.nom }}"
+      loop: "{{ utilisateurs_groupes.utilisateurs }}"
+      register: existing_users
+      ignore_errors: true
+      when: action == 'adduser' or action == 'deluser'
+
+    - name: Check groups
+      shell: "getent group {{ item.nom }}"
+      loop: "{{ utilisateurs_groupes.groupes }}"
+      register: existing_groups
+      ignore_errors: true
+      when: action == 'addgroup' or action == 'delgroup'
+
+    - block:
+        - name: Add users
+          include_tasks: add_users.yaml
+          vars:
+            utilisateurs: "{{ utilisateurs_groupes.utilisateurs }}"
+          when: action == 'adduser'
+
+        - name: Delete users
+          include_tasks: delete_users.yaml
+          vars:
+            utilisateurs: "{{ utilisateurs_groupes.utilisateurs }}"
+          when: action == 'deluser'
+
+        - name: Add groups
+          include_tasks: add_groups.yaml
+          vars:
+            groupes: "{{ utilisateurs_groupes.groupes }}"
+          when: action == 'addgroup'
+
+        - name: Delete groups
+          include_tasks: delete_groups.yaml
+          vars:
+            groupes: "{{ utilisateurs_groupes.groupes }}"
+          when: action == 'delgroup'

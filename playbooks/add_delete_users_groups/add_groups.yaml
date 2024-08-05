@@ -1,0 +1,6 @@
+---
+- name: Add groups
+  group:
+    name: "{{ item.nom }}"
+    state: present
+  with_items: "{{ groupes }}"

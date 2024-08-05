@@ -65,6 +65,9 @@ A faire :
 - Intégrer une option Inventaire à part entière.
 
 
+- Arranger les playbooks
+
+
 Scénarios : 
 	- Pour ajouter ou supprimer un utilisateur 
 		on demande un fichier au format utilisateurs_groupes.yaml , ce dernier est utilisé par defaut

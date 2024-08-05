@@ -1,49 +1,73 @@
 import json
+import os
 
-# Charger les données JSON
-with open('message.txt') as file:
-    data = json.load(file)
+# Fonction pour générer l'inventaire Ansible à partir d'un fichier JSON
+def generer_inventaire(json_file, noeud):
+    with open(json_file) as file:
+        data = json.load(file)
 
-# Préparer les groupes
-groups = {
-    "LAN": [],
-    "DMZ": [],
-    "WAN": []  # Ajouter ici les hôtes du groupe WAN si nécessaire
-}
+    groups = {
+        "LAN": [],
+        "DMZ": [],
+        "WAN": []  # Ajouter ici les hôtes du groupe WAN si nécessaire
+    }
 
-# Parcourir les hôtes et les ajouter aux groupes appropriés
-for host, details in data["_meta"]["hostvars"].items():
-    if "kali" in host or "bastion" in host:
-        continue  # Exclure les hôtes "kali" et "bastion"
-    if "lan" in details["proxmox_tags"]:
-        ip_address = f"192.168.1.{details['proxmox_vmid']}"
-        groups["LAN"].append(f"{host} ansible_host={ip_address}")
-    if "dmz" in details["proxmox_tags"]:
-        groups["DMZ"].append(f"{host} ansible_host={host}")
-    # Ajouter ici la condition pour le groupe WAN si nécessaire
+    for host, details in data["_meta"]["hostvars"].items():
+        if "kali-bastion" in host:
+            continue  # Exclure les hôtes "kali" et "bastion"
+        if "lan" in details["proxmox_tags"]:
+            groups["LAN"].append(f"{host} ansible_host={host}")
+        if "dmz" in details["proxmox_tags"]:
+            groups["DMZ"].append(f"{host} ansible_host={host}")
+        # Ajouter ici la condition pour le groupe WAN si nécessaire
 
-# Générer le fichier d'inventaire Ansible principal
-inventory = []
+    inventory = [f"[{noeud}]"]
 
-for group, hosts in groups.items():
-    inventory.append(f"[{group}]")
-    inventory.extend(hosts)
-    inventory.append("")  # Ajouter une ligne vide entre les groupes
+    for group, hosts in groups.items():
+        inventory.append(f"[{noeud}:{group}]")
+        inventory.extend(hosts)
+        inventory.append("")  # Ajouter une ligne vide entre les groupes
 
-# Ajouter la section [ALL:children]
-inventory.append("[ALL:children]")
-inventory.append("LAN")
-inventory.append("DMZ")
-inventory.append("WAN")
-inventory.append("")
+    inventory.append(f"[{noeud}:children]")
+    inventory.append(f"{noeud}:LAN")
+    inventory.append(f"{noeud}:DMZ")
+    inventory.append("")
 
-# Écrire le fichier d'inventaire principal
-with open('ansible_inventory.ini', 'w') as file:
-    file.write("\n".join(inventory))
+    return inventory, groups
 
-# Écrire les fichiers pour chaque groupe
-for group, hosts in groups.items():
-    with open(f'group_vars/{group.lower()}.ini', 'w') as file:
-        file.write("\n".join(hosts))
+# Liste des fichiers JSON et des répertoires de sortie correspondants
+fichiers = [
+    ("wano.json", "wano"),
+    ("narnia.json", "narnia")
+]
 
-print("Les fichiers d'inventaire Ansible ont été générés avec succès.")
+all_inventory = []
+node_names = []
+
+# Générer les inventaires pour chaque fichier JSON
+for json_file, noeud in fichiers:
+    inventory, groups = generer_inventaire(json_file, noeud)
+    node_names.append(noeud)
+    
+    output_dir = f"nodes/{noeud}"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    with open(os.path.join(output_dir, 'hosts'), 'w') as file:
+        file.write("\n".join(inventory))
+    
+    os.makedirs(os.path.join(output_dir, 'group_vars'), exist_ok=True)
+    
+    for group, hosts in groups.items():
+        with open(os.path.join(output_dir, f'group_vars/{group.lower()}.ini'), 'w') as file:
+            file.write("\n".join(hosts))
+    
+    all_inventory.extend(inventory)
+
+all_inventory.append("")
+all_inventory.append("[ALL:children]")
+all_inventory.extend(node_names)
+
+with open('all.ini', 'w') as file:
+    file.write("\n".join(all_inventory))
+
+print("Les fichiers d'inventaire Ansible ont été générés avec succès pour tous les noeuds et l'inventaire total.")

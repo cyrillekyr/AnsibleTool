@@ -1,0 +1,6 @@
+---
+- name: Delete groups
+  group:
+    name: "{{ item.nom }}"
+    state: absent
+  with_items: "{{ groupes }}"
