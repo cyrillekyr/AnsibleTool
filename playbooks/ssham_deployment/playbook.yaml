@@ -6,12 +6,12 @@
   tasks:
     - name: Copy script.sh on all servers
       copy:
-        src: /root/scripts/ansible/deployment_machines/load-key.sh
+        src: ../files/load-key.sh
         dest: /root/load-key.sh
         mode: 0755
     - name: Copy of ssham  key
       copy:
-        src: /root/scripts/ansible/deployment_machines/ssham-key
+        src: ../files/ssham-key
         dest: /root/ssham-key
 
     - name: Execute the script

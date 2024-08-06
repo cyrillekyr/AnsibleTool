@@ -22,6 +22,8 @@ deployer_machine() {
                     read -r servers
                     echo "$servers"
                     # Action
+
+                    ansible-playbook -i "$servers", $PLAYBOOKS/server_deployment/playbook.yaml
                     
 
                     echo "Deployment successfull !!!"
@@ -59,16 +61,23 @@ deployer_machine() {
                     case $choice in
                         1)
                             echo "Deployment on $active_node LAN" 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/lan.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
 
                             ;;
                         2)
                             echo "Deployment on $active_node DMZ" 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/dmz.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
+
                             ;;
                         3)
                             echo "Deployment on $active_node WAN" 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/wan.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
+
                             ;;
                         4)
                             echo "Deployment on all servers of $active_node " 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/hosts "$PLAYBOOKS"/server_deployment/playbook.yaml
+
                             ;;
                         *)
                             echo "Invalid choice"
@@ -80,7 +89,8 @@ deployer_machine() {
                 3)
                     
                     #Action
-                    #ansible-playbook -i $inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+                    ansible-playbook -i "$INVENTORIES"/all.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
+                    
 
                     echo "Deployment successful"
                     ;;

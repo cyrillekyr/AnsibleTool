@@ -16,14 +16,14 @@ deployer_user() {
 
     case $choice in 
         1)
-            user_groups_file="../playbooks/utilisateurs_groupes.yaml"
+            user_groups_file="$PLAYBOOKS/utilisateurs_groupes.yaml"
             ;;
         2)
             # Ask for the number of users to be deployed
             read -r -p "How many users will be deployed? " num_users
 
             # Initialize the output file
-            output_file="../playbooks/custom_utilisateurs_groupes.yaml"
+            output_file="$PLAYBOOKS/custom_utilisateurs_groupes.yaml"
             echo "utilisateurs:" > $output_file
 
             # Loop through the number of users and collect their information
@@ -70,7 +70,7 @@ deployer_user() {
                     read -r servers
                     echo "$servers"
                     # Action
-                    ansible-playbook -i "$servers", playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
+                    ansible-playbook -i "$servers", "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
 
                     echo "Deployment successfull !!!"
                     ;;
@@ -106,16 +106,23 @@ deployer_user() {
                     case $choice in
                         1)
                             echo "Deployment on $active_node LAN" 
-
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/lan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
+                                                     
                             ;;
                         2)
                             echo "Deployment on $active_node DMZ" 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/dmz.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
+
                             ;;
                         3)
                             echo "Deployment on $active_node WAN" 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/wan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
+
                             ;;
                         4)
                             echo "Deployment on all servers of $active_node " 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
+
                             ;;
                         *)
                             echo "Invalid choice"
@@ -129,7 +136,7 @@ deployer_user() {
                 3)
                     
                     #Action
-                    #ansible-playbook -i $inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+                    ansible-playbook -i "$INVENTORIES"/all.ini playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
 
                     echo "Deployment successful"
                     ;;

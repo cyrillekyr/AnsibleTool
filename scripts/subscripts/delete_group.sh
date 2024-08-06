@@ -60,17 +60,17 @@ delete_group() {
 
             case $target in
                 1)
-                    # Provide the specific servers informations
+                    # Demander à l'utilisateur de spécifier les serveurs spécifiques
                     echo -n "Please specify the specific servers (comma separated): "
                     read -r servers
                     echo "$servers"
                     # Action
-                    ansible-playbook -i "$servers", playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$groups_file"
+                    ansible-playbook -i "$servers", "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
 
                     echo "Deployment successfull !!!"
                     ;;
                 2)
-                    # Specify the group
+                    # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
                     echo "Please specify the node  : "
                     nodes=$(ls "$INVENTORIES/nodes")
                     i=1
@@ -101,16 +101,23 @@ delete_group() {
                     case $choice in
                         1)
                             echo "Deployment on $active_node LAN" 
-
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/lan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=delgroup utilisateurs_groupes_file=$user_groups_file"
+                                                     
                             ;;
                         2)
                             echo "Deployment on $active_node DMZ" 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/dmz.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=delgroup utilisateurs_groupes_file=$user_groups_file"
+
                             ;;
                         3)
                             echo "Deployment on $active_node WAN" 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/wan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=delgroup utilisateurs_groupes_file=$user_groups_file"
+
                             ;;
                         4)
                             echo "Deployment on all servers of $active_node " 
+                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=delgroup utilisateurs_groupes_file=$user_groups_file"
+
                             ;;
                         *)
                             echo "Invalid choice"
@@ -124,7 +131,7 @@ delete_group() {
                 3)
                     
                     #Action
-                    #ansible-playbook -i $inventaire, playbooks/add_delete_users_groups/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$fichier_machine"
+                    ansible-playbook -i "$INVENTORIES"/all.ini playbooks/add_delete_users_groups/create.yaml --extra-vars "action=delgroup utilisateurs_groupes_file=$user_groups_file"
 
                     echo "Deployment successful"
                     ;;
