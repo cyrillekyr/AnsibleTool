@@ -49,7 +49,7 @@ execute_action()
     2) ./subscripts/remove_user.sh ;;
     3) ./subscripts/create_group.sh ;;
     4) ./subscripts/delete_group.sh ;;
-    5) ./subscripts/deploy_machine.sh ;;
+    5) ./subscripts/new_server_deployment.sh ;;
     6) ./subscripts/remove_machine.sh ;;
     7) ./subscripts/execute_playbook.sh ;;
     8) ./subscripts/dynamic_inventory.sh ;;
