@@ -65,7 +65,7 @@ remove_user() {
                     read -r servers
                     echo "$servers"
                     # Action
-                    ansible-playbook -i "$servers", "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$user_groups_file"
+                    ansible-playbook -i "$servers", "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$users_file"
 
                     echo "Deployment successfull !!!"
                     ;;
