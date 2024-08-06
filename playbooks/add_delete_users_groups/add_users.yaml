@@ -14,13 +14,13 @@
 
 - name: Copy ssham-key file on the server 
   copy:
-    src: ../files/ssham-key"
+    src: ../../files/ssham-key"
     dest: "/root/ssham-key"
   when: action == 'adduser'
 
 - name: Setup the bashrc file
   copy:
-    src: "../files/.bashrc"
+    src: "../../files/.bashrc"
     dest: "/home/{{ item.nom }}/"
   with_items: "{{ utilisateurs }}"
   when: action == 'adduser'

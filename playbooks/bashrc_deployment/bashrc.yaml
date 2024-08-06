@@ -5,13 +5,13 @@
   tasks:
     - name: Copier le script.sh sur toutes les machines
       copy:
-        src: ../files/load_bashrc.sh
+        src: ../../files/load_bashrc.sh
         dest: /root/load_bashrc.sh
         mode: 0755
         
     - name: Copier le script.sh sur toutes les machines
       copy:
-        src: ../files/.bashrc
+        src: ../../files/.bashrc
         dest: /root/.bashrc
         mode: 0755
 

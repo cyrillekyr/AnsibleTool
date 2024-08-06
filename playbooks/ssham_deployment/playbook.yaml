@@ -6,12 +6,12 @@
   tasks:
     - name: Copy script.sh on all servers
       copy:
-        src: ../files/load-key.sh
+        src: ../../files/load-key.sh
         dest: /root/load-key.sh
         mode: 0755
     - name: Copy of ssham  key
       copy:
-        src: ../files/ssham-key
+        src: ../../files/ssham-key
         dest: /root/ssham-key
 
     - name: Execute the script

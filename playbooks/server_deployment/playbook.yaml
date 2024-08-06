@@ -55,7 +55,7 @@
   tasks:
     - name: Copy change_shell.sh file
       copy:
-        src: ../files/change_shell.sh
+        src: ../../files/change_shell.sh
         dest: /root/change_shell.sh
         mode: 0755
 
@@ -85,7 +85,7 @@
   tasks:
     - name: Copy the script sudovi
       copy:
-        src: ../files/sudovi-user.sh
+        src: ../../files/sudovi-user.sh
         dest: /root/sudovi-user.sh
         mode: 0755
 
@@ -104,12 +104,12 @@
   tasks:
     - name: Copy script.sh on all servers
       copy:
-        src: ../files/load-key.sh
+        src: ../../files/load-key.sh
         dest: /root/load-key.sh
         mode: 0755
     - name: Copy of ssham  key
       copy:
-        src: ../files/ssham-key
+        src: ../../files/ssham-key
         dest: /root/ssham-key
 
     - name: Execute the script
@@ -132,13 +132,13 @@
   tasks:
     - name: Copy  load_bashrc.sh  on all servers
       copy:
-        src: ../files/load_bashrc.sh
+        src: ../../files/load_bashrc.sh
         dest: /root/load_bashrc.sh
         mode: 0755
 
     - name: Copy .bashrc on all servers
       copy:
-        src: ../files/.bashrc
+        src: ../../files/.bashrc
         dest: /root/.bashrc
         mode: 0755
 

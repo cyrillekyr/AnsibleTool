@@ -1,6 +1,7 @@
 #! /bin/bash 
 
 # Deploy basic configurations on a new server
+source config.sh
 
 
 #Deploy a machine
@@ -99,3 +100,5 @@ deployer_machine() {
                             ;;
     esac
 }
+
+deployer_machine
