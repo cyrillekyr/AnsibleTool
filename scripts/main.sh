@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source config.sh
+source logger.sh 
 
 
 

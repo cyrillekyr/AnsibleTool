@@ -1,13 +1,4 @@
 utilisateurs:
-  - nom: jean
+  - nom: hf
     groupes:
-      - group1
-      - server
-  - nom: cole
-    groupes:
-      - group2
-  - nom: user3
-    groupes:
-      - groupg
-      - youknow
-      - others
+      - dd

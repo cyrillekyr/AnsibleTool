@@ -2,6 +2,7 @@
 
 # Deploy basic configurations on a new server
 source config.sh
+source logger.sh
 
 
 #Deploy a machine
@@ -25,7 +26,7 @@ deployer_machine() {
                     # Action
 
                     ansible-playbook -i "$servers", $PLAYBOOKS/server_deployment/playbook.yaml
-                    
+                    log_action "Default configurations deployed on $servers "
 
                     echo "Deployment successfull !!!"
                     ;;
@@ -63,21 +64,25 @@ deployer_machine() {
                         1)
                             echo "Deployment on $active_node LAN" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/lan.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
+                            log_action "Default configurations deployed on $active_node LAN "
 
                             ;;
                         2)
                             echo "Deployment on $active_node DMZ" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/dmz.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
+                            log_action "Default configurations deployed on $active_node DMZ "
 
                             ;;
                         3)
                             echo "Deployment on $active_node WAN" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/wan.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
+                            log_action "Default configurations deployed on $active_node WAN "
 
                             ;;
                         4)
                             echo "Deployment on all servers of $active_node " 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/hosts "$PLAYBOOKS"/server_deployment/playbook.yaml
+                            log_action "Default configurations deployed on all $active_node servers "
 
                             ;;
                         *)
@@ -91,7 +96,7 @@ deployer_machine() {
                     
                     #Action
                     ansible-playbook -i "$INVENTORIES"/all.ini "$PLAYBOOKS"/server_deployment/playbook.yaml
-                    
+                    log_action "Default configurations deployed all on servers"
 
                     echo "Deployment successful"
                     ;;

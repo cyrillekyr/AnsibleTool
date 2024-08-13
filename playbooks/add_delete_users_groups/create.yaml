@@ -1,5 +1,5 @@
 
-#ansible-playbook -i votre_machine, create_users_groups.yaml --extra-vars "action=add utilisateurs_groupes_file=/chemin/vers/votre/fichier/utilisateurs_groupes.yaml"
+#ansible-playbook -i votre_machine, create_users_groups.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=/chemin/vers/votre/fichier/utilisateurs_groupes.yaml"
 
 ---
 - name: Manage users and groups

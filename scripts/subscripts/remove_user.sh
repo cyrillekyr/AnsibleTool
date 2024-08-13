@@ -1,6 +1,7 @@
 #! /bin/bash
 
 source config.sh
+source logger.sh
 
 
 
@@ -66,6 +67,7 @@ remove_user() {
                     echo "$servers"
                     # Action
                     ansible-playbook -i "$servers", "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$users_file"
+                    log_action "Deletion of users from $servers "
 
                     echo "Deployment successfull !!!"
                     ;;
@@ -102,21 +104,25 @@ remove_user() {
                         1)
                             echo "Deployment on $active_node LAN" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/lan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$user_groups_file"
+                            log_action "Deletion of users from $active_node LAN "
                                                      
                             ;;
                         2)
                             echo "Deployment on $active_node DMZ" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/dmz.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$user_groups_file"
+                            log_action "Deletion of users from $active_node DMZ "
 
                             ;;
                         3)
                             echo "Deployment on $active_node WAN" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/wan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$user_groups_file"
+                            log_action "Deletion of users from $active_node WAN "
 
                             ;;
                         4)
                             echo "Deployment on all servers of $active_node " 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$user_groups_file"
+                            log_action "Deletion of users from $active_node servers "
 
                             ;;
                         *)
@@ -134,6 +140,8 @@ remove_user() {
                     ansible-playbook -i "$INVENTORIES"/all.ini playbooks/add_delete_users_groups/create.yaml --extra-vars "action=deluser utilisateurs_groupes_file=$user_groups_file"
 
                     echo "Deployment successful"
+                    log_action "Deletion of users from all servers "
+
                     ;;
                 *)
                     echo "Invalid choice"
@@ -142,9 +150,12 @@ remove_user() {
             
         else
             echo "The file '$user_groups_file' has invalid format"
+            log_action "Error: The file '$user_groups_file' has invalid format"
+
         fi
     else
-        echo "The $user_groups_file doesn't exist."
+        echo "The file $user_groups_file doesn't exist."
+        log_action "Error: The file $user_groups_file doesn't exist."
     fi
 }
 

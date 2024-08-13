@@ -1,6 +1,7 @@
 #! /bin/bash
 
 source config.sh
+source logger.sh
 
 
 
@@ -68,6 +69,7 @@ create_group() {
                     ansible-playbook -i "$servers", "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
 
                     echo "Deployment successfull !!!"
+                    log_action "Groups added on  $servers"
                     ;;
                 2)
                     # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
@@ -102,21 +104,24 @@ create_group() {
                         1)
                             echo "Deployment on $active_node LAN" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/lan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
-                                                     
+                            log_action "Grpoups added on $active_node LAN"                         
                             ;;
                         2)
                             echo "Deployment on $active_node DMZ" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/dmz.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
+                            log_action "Grpoups added on $active_node DMZ"                         
 
                             ;;
                         3)
                             echo "Deployment on $active_node WAN" 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/wan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
+                            log_action "Grpoups added on $active_node WAN"                         
 
                             ;;
                         4)
                             echo "Deployment on all servers of $active_node " 
                             ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
+                            log_action "Grpoups added on all servers of $active_node"                         
 
                             ;;
                         *)
@@ -134,6 +139,8 @@ create_group() {
                     ansible-playbook -i "$INVENTORIES"/all.ini playbooks/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
 
                     echo "Deployment successful"
+                    log_action "Grpoups added on all servers"                         
+
                     ;;
                 *)
                     echo "Invalid choice"
@@ -142,9 +149,13 @@ create_group() {
             
         else
             echo "The file '$groups_file' has invalid format"
+            log_action "Error: The file '$groups_file' has invalid format"                         
+
         fi
     else
-        echo "The $groups_file doesn't exist."
+        echo "The file $groups_file doesn't exist."
+        log_action "Error: The file '$groups_file' doesn't exist"                         
+
     fi
 }
 
