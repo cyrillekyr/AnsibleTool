@@ -84,7 +84,7 @@ deployer_machine() {
                         log_action "Default configurations deployed on $active_node $selected_group "
                     elif [[ $choice -eq $index ]]; then
                         echo "Deployment on all groups of $active_node"
-                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
+                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts "$PLAYBOOKS"/server_deployment/default.yaml
                         log_action "Deployment of all groups on all servers of $active_node"
                     else
                         echo "Invalid choice"
