@@ -66,77 +66,79 @@ create_group() {
                     read -r servers
                     echo "$servers"
                     # Action
-                    ansible-playbook -i "$servers", "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
+                    ansible-playbook -i "$servers", "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
 
                     echo "Deployment successfull !!!"
                     log_action "Groups added on  $servers"
                     ;;
                 2)
-                    # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
-                    echo "Please specify the node  : "
-                    nodes=$(ls "$INVENTORIES/nodes")
-                    i=1
-                    for node in $nodes
-                    do
-                        echo "$i- $node"
-                        ((i++))
+                     # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
+ 
+                    # Charger les noeuds et groupes depuis le fichier config.json sans utiliser jq
+                    config_file="$SCRIPTS/config.json"
+                    nodes=$(grep -oP '"noeud":\s*"\K[^"]+' "$config_file" | tr '\n' ' ')
+                    
+                    
+                    echo "Please specify the node"
+                    index=1
+                    for node in $nodes; do
+                        echo "$index- $node"
+                        index=$((index+1))
                     done
+                    
 
-                    read -r nd 
-                    i=1
-                    for node in $nodes
-                    do
-                        if [ $i -eq "$nd" ]; then
-                            active_node=$node
-                            break
-                        fi
-                        ((i++))
+                    
+                    num_nodes=$(echo "$nodes" | wc -w)
+                    read -r node_choice
+                    if [[ $node_choice -ge 1 && $node_choice -le $num_nodes ]]; then                        
+                        active_node=$(echo "$nodes" | awk -v choice="$node_choice" '{print $choice}')
+                        
+                    else
+                        echo "Invalid node choice"
+                        exit 1
+                    fi
+
+                    
+                    groups=$(grep -oP '"groups":\s*\[\K[^\]]+' "$config_file" | tr -d '",' | tr '\n' ' ')
+                    
+                    echo "($active_node) Please specify a group"
+
+                    # Afficher dynamiquement les options de groupe
+                    index=1
+                    for group in $groups; do
+                        echo "$index-($active_node) $group"
+                        index=$((index+1))
                     done
+                    echo "$index-($active_node) ALL"
+                    num_groups=$(echo "$groups" | wc -w)
 
-                    echo  "($active_node) Please specify the group"
-                    echo  "1-($active_node) LAN"
-                    echo  "2-($active_node) DMZ"
-                    echo  "3-($active_node) WAN"
-                    echo  "4-($active_node) ALL"
-
+                    # Lire le choix de l'utilisateur
                     read -r choice
-                    case $choice in
-                        1)
-                            echo "Deployment on $active_node LAN" 
-                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/lan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
-                            log_action "Grpoups added on $active_node LAN"                         
-                            ;;
-                        2)
-                            echo "Deployment on $active_node DMZ" 
-                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/dmz.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
-                            log_action "Grpoups added on $active_node DMZ"                         
 
-                            ;;
-                        3)
-                            echo "Deployment on $active_node WAN" 
-                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/wan.ini  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
-                            log_action "Grpoups added on $active_node WAN"                         
 
-                            ;;
-                        4)
-                            echo "Deployment on all servers of $active_node " 
-                            ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts  "$PLAYBOOKS"/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
-                            log_action "Grpoups added on all servers of $active_node"                         
+                    # Traiter le choix
+                    if [[ $choice -ge 1 && $choice -le $num_groups ]]; then
+                        selected_group=$(echo "$groups" | awk -v choice=$choice '{print $choice}' | tr '[:upper:]' '[:lower:]')
+                        echo $selected_group
+                        echo "Deployment on $active_node $selected_group"
+                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/"$selected_group".ini "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
+                        log_action "Deployment of groups on $active_node $selected_group"
+                    elif [[ $choice -eq $index ]]; then
+                        echo "Deployment on all groups of $active_node"
+                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/hosts "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
+                        log_action "Deployment of all groups on all servers of $active_node"
+                    else
+                        echo "Invalid choice"
+                    fi
 
-                            ;;
-                        *)
-                            echo "Invalid choice"
-                        ;;
-                    esac
-
-                    ;;
+                 ;; 
 
                     
                  
                 3)
                     
                     #Action
-                    ansible-playbook -i "$INVENTORIES"/all.ini playbooks/add_delete_users_groups/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$user_groups_file"
+                    ansible-playbook -i "$INVENTORIES"/all.ini playbooks/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
 
                     echo "Deployment successful"
                     log_action "Grpoups added on all servers"                         

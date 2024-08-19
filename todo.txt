@@ -64,6 +64,11 @@ A faire :
 - Adopter une architecture scalable
 - Intégrer une option Inventaire à part entière.
 
+- Administration
+	Fonctionnalités d'ajout de noeud qui inclut le dump des machines et la sauvegarde dans les fichiers config.json et l'execution de dynamic_inventory.sh
+	Fonctionnalités d'ajout de groupes_vars
+	Vault
+	Controle de toute l'infrastructure - Health check
 
 - Arranger les playbooks
 
