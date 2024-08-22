@@ -1,73 +1,82 @@
 import json
 import os
+import sys
 
 # Fonction pour générer l'inventaire Ansible à partir d'un fichier JSON
-def generer_inventaire(json_file, noeud):
+def generer_inventaire(json_file, noeud, groups):
     with open(json_file) as file:
         data = json.load(file)
 
-    groups = {
-        "LAN": [],
-        "DMZ": [],
-        "WAN": []  # Ajouter ici les hôtes du groupe WAN si nécessaire
-    }
+    group_dict = {group: [] for group in groups}
 
     for host, details in data["_meta"]["hostvars"].items():
         if "kali-bastion" in host:
             continue  # Exclure les hôtes "kali" et "bastion"
-        if "lan" in details["proxmox_tags"]:
-            groups["LAN"].append(f"{host} ansible_host={host}")
-        if "dmz" in details["proxmox_tags"]:
-            groups["DMZ"].append(f"{host} ansible_host={host}")
-        # Ajouter ici la condition pour le groupe WAN si nécessaire
+        for group in groups:
+            if group.lower() in details["proxmox_tags"]:
+                group_dict[group].append(f"{host} ansible_host={host}")
 
     inventory = [f"[{noeud}]"]
 
-    for group, hosts in groups.items():
+    for group, hosts in group_dict.items():
         inventory.append(f"[{noeud}:{group}]")
         inventory.extend(hosts)
         inventory.append("")  # Ajouter une ligne vide entre les groupes
 
     inventory.append(f"[{noeud}:children]")
-    inventory.append(f"{noeud}:LAN")
-    inventory.append(f"{noeud}:DMZ")
+    inventory.extend([f"{noeud}:{group}" for group in groups])
     inventory.append("")
 
-    return inventory, groups
+    return inventory, group_dict
 
-# Liste des fichiers JSON et des répertoires de sortie correspondants
-fichiers = [
-    ("wano.json", "wano"),
-    ("narnia.json", "narnia")
-]
+def main():
+    # Vérifier si un fichier JSON a été passé en argument
+    if len(sys.argv) != 2:
+        print("Usage: python script.py variables.json")
+        sys.exit(1)
 
-all_inventory = []
-node_names = []
+    variables_file = sys.argv[1]
 
-# Générer les inventaires pour chaque fichier JSON
-for json_file, noeud in fichiers:
-    inventory, groups = generer_inventaire(json_file, noeud)
-    node_names.append(noeud)
-    
-    output_dir = f"nodes/{noeud}"
-    os.makedirs(output_dir, exist_ok=True)
-    
-    with open(os.path.join(output_dir, 'hosts'), 'w') as file:
-        file.write("\n".join(inventory))
-    
-    os.makedirs(os.path.join(output_dir, 'group_vars'), exist_ok=True)
-    
-    for group, hosts in groups.items():
-        with open(os.path.join(output_dir, f'group_vars/{group.lower()}.ini'), 'w') as file:
-            file.write("\n".join(hosts))
-    
-    all_inventory.extend(inventory)
+    # Charger les variables depuis le fichier JSON
+    with open(variables_file) as file:
+        variables = json.load(file)
 
-all_inventory.append("")
-all_inventory.append("[ALL:children]")
-all_inventory.extend(node_names)
+    nodes = variables["nodes"]
+    groups = variables["groups"]
 
-with open('all.ini', 'w') as file:
-    file.write("\n".join(all_inventory))
+    all_inventory = []
+    node_names = []
 
-print("Les fichiers d'inventaire Ansible ont été générés avec succès pour tous les noeuds et l'inventaire total.")
+    # Générer les inventaires pour chaque fichier JSON
+    for node in nodes:
+        json_file = node["json_file"]
+        noeud = node["noeud"]
+
+        inventory, group_dict = generer_inventaire(json_file, noeud, groups)
+        node_names.append(noeud)
+
+        output_dir = f"nodes/{noeud}"
+        os.makedirs(output_dir, exist_ok=True)
+
+        with open(os.path.join(output_dir, 'hosts'), 'w') as file:
+            file.write("\n".join(inventory))
+
+        os.makedirs(os.path.join(output_dir, 'group_vars'), exist_ok=True)
+
+        for group, hosts in group_dict.items():
+            with open(os.path.join(output_dir, f'group_vars/{group.lower()}.ini'), 'w') as file:
+                file.write("\n".join(hosts))
+
+        all_inventory.extend(inventory)
+
+    all_inventory.append("")
+    all_inventory.append("[ALL:children]")
+    all_inventory.extend(node_names)
+
+    with open('all.ini', 'w') as file:
+        file.write("\n".join(all_inventory))
+
+    print("Les fichiers d'inventaire Ansible ont été générés avec succès pour tous les noeuds et l'inventaire total.")
+
+if __name__ == "__main__":
+    main()

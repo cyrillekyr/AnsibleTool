@@ -1,0 +1,29 @@
+{
+    "nodes": [
+        {
+            "json_file": "wano.json",
+            "noeud": "wano"
+        },
+        {
+            "json_file": "narnia.json",
+            "noeud": "narnia"
+        },
+        {
+            "json_file": "test.json",
+            "noeud": "test"
+        },
+        {
+            "json_file": "mynode.json",
+            "noeud": "mynode",
+            "username": "user",
+            "password": "pass",
+            "url": "hub.com"
+        }
+    ],
+    "groups": [
+        "LAN",
+        "DMZ",
+        "WAN",
+        "DEV"
+    ]
+}

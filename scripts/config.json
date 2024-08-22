@@ -1,8 +1,0 @@
-{
-    "nodes": [
-        {"json_file": "wano.json", "noeud": "wano"},
-        {"json_file": "narnia.json", "noeud": "narnia"}
-        {"json_file": "test.json", "noeud": "test"}
-    ],
-    "groups": ["LAN", "DMZ", "WAN" , "NEW"]
-}
