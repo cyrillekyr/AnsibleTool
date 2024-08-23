@@ -97,7 +97,8 @@ remove_user() {
                     fi
 
                     
-                    groups=$(grep -oP '"groups":\s*\[\K[^\]]+' "$config_file" | tr -d '",' | tr '\n' ' ')
+                    groups=$(sed -n '/"groups": \[/,/\]/p' "$config_file" | tr -d '\n' | sed 's/.*\[//;s/\].*//;s/[",]//g')
+
                     
                     echo "($active_node) Please specify a group"
 

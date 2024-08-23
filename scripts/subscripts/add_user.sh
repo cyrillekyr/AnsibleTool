@@ -80,7 +80,7 @@ deployer_user() {
                     # Demander à l'utilisateur de spécifier le chemin du fichier d'inventaire
  
                     # Charger les noeuds et groupes depuis le fichier config.json sans utiliser jq
-                    config_file="$SCRIPTS/config.json"
+                    config_file="../inventories/dynamic/config.json"
                     nodes=$(grep -oP '"noeud":\s*"\K[^"]+' "$config_file" | tr '\n' ' ')
                     
                     
@@ -104,8 +104,9 @@ deployer_user() {
                     fi
 
                     
-                    groups=$(grep -oP '"groups":\s*\[\K[^\]]+' "$config_file" | tr -d '",' | tr '\n' ' ')
-                    
+                    groups=$(sed -n '/"groups": \[/,/\]/p' "$config_file" | tr -d '\n' | sed 's/.*\[//;s/\].*//;s/[",]//g')
+
+
                     echo "($active_node) Please specify a group"
 
                     # Afficher dynamiquement les options de groupe
