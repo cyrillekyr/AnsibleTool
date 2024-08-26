@@ -1,9 +1,9 @@
 #!/bin/bash
 
-source main_functions.sh
+source main_funcs.sh
 
 # Define the command to run the Ansible ping
-ANSIBLE_CMD="ansible all -i ../iventories/all.hosts -m ping"
+ANSIBLE_CMD="ansible all -i ../inventories/all.hosts -m ping"
 
 run_dynamic_inventory
 

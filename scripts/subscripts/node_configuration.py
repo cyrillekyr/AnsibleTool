@@ -32,7 +32,7 @@ def update_dynamic_script(config):
                 file.write(command)
             else:
                 print(f"Warning: Node '{node['noeud']}' is missing URL, username, or password. Skipping in script.")
-        file.write("\npython3 $INVENTORIES/dynamic/process.py config.json\n")
+        file.write("\npython3 $INVENTORIES/dynamic/process.py $INVENTORIES/dynamic/config.json\n")
 
 
 def execute_dynamic_script():
@@ -41,7 +41,7 @@ def execute_dynamic_script():
 
 def add_node(config):
     noeud = input("Enter the node name (e.g., Wano): ")
-    json_file = f"{noeud.lower()}.json"
+    json_file = f"$INVENTORIES/dynamic/{noeud.lower()}.json"
     username = input("Enter the Proxmox username: ")
     password = input("Enter the Proxmox password: ")
     url = input("Enter the Proxmox URL: ")

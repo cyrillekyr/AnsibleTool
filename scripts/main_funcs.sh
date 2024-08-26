@@ -1,4 +1,5 @@
 #!/bin/bash
+source config.sh
 
 log_action() {
     log_file="$PLAYBOOKS/action_log"
