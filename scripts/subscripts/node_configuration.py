@@ -22,17 +22,17 @@ def save_config(config):
 
 def update_dynamic_script(config):
     with open(DYNAMIC_SCRIPT, 'w') as file:
-        file.write("#! /bin/bash\n\n")
+        file.write("#! /bin/bash\n\nsource config.sh\n\n")
         for node in config['nodes']:
             if 'url' in node and 'username' in node and 'password' in node:
                 command = (
-                    f"python3 proxmox.py --url={node['url']} --username={node['username']} "
+                    f"python3 $INVENTORIES/dynamic/proxmox.py --url={node['url']} --username={node['username']} "
                     f"--password={node['password']} --trust-invalid-certs --list --pretty > ../inventories/dynamic/{node['noeud'].lower()}.json\n"
                 )
                 file.write(command)
             else:
                 print(f"Warning: Node '{node['noeud']}' is missing URL, username, or password. Skipping in script.")
-        file.write("\npython3 process.py\n")
+        file.write("\npython3 $INVENTORIES/dynamic/process.py config.json\n")
 
 
 def execute_dynamic_script():
