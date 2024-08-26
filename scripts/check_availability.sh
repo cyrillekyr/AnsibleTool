@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source main_functions.sh
+
 # Define the command to run the Ansible ping
 ANSIBLE_CMD="ansible all -i ../iventories/all.hosts -m ping"
 

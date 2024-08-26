@@ -58,7 +58,7 @@ execute_action()
     6) ./subscripts/remove_machine.sh ;;
     7) ./subscripts/execute_playbook.sh ;;
     8) ./subscripts/dynamic_inventory.sh ;;
-    9) ./subscripts/check_availability.sh ;;
+    9) ./check_availability.sh ;;
     10) ./subscripts/administration.sh ;;
     0) exit 0 ;;
     *) echo "Invalid option" ;;

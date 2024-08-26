@@ -1,27 +1,29 @@
 import json
 import os
-import subprocess
+import datetime
+import getpass
 
 
-def call_main_functions(function_name, *args):
-    script_path = "main_funcs.sh"
+def log_action(action, log_file='../playbooks/action_log'):
+    """
+    Log an action to a specified log file with a timestamp and user information.
     
-    try:
-        # Build the command with the function name and arguments
-        # Escape single quotes in args if necessary
-        args_escaped = [arg.replace("'", "\\'") for arg in args]
-        command = [script_path, function_name] + args_escaped
-        
-        # Execute the specific function in the bash script
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-
-        # Print the output and error (if any)
-        print("Output:\n", result.stdout)
-        if result.stderr:
-            print("Errors:\n", result.stderr)
-            
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e}")
+    :param action: The action description to log.
+    :param log_file: Path to the log file. Defaults to './action_log'.
+    """
+    # Ensure the log directory exists
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    
+    # Get current time and user
+    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    user = getpass.getuser()
+    
+    # Format the log message
+    log_message = f"{current_time} | User: {user} | Action: {action}\n"
+    
+    # Append the log message to the log file
+    with open(log_file, 'a') as file:
+        file.write(log_message)
 
 
 CONFIG_FILE = '../inventories/dynamic/config.json'
@@ -51,12 +53,12 @@ def add_group(config):
     if normalized_group in (group.upper() for group in config['groups']):
         print(f"The group '{new_group}' already exists.")
         log_text = "Error while creating  the group var " + new_group + " : The group already exixts"
-        call_main_functions("log_action", log_text)
+        log_action(log_text)
     else:
         config['groups'].append(normalized_group)
         print(f"The group '{new_group}' has been added.")
         log_text = "The group var " + new_group + " has been added"
-        call_main_functions("log_action", log_text)
+        log_action(log_text)
 
     save_config(config)
 
@@ -72,11 +74,11 @@ def remove_group(config):
         removed_group = config['groups'].pop(index)
         print(f"The group '{removed_group}' has been removed.")
         log_text = "The group var " + remove_group + " has been removed"
-        call_main_functions("log_action", log_text)
+        log_action(log_text)
     else:
         print(f"The group '{group_to_remove}' does not exist.")
         log_text = "Error while removing the group var " + group_to_remove + " : The group does not exist"
-        call_main_functions("log_action", log_text)
+        log_action(log_text)
 
     save_config(config)
 

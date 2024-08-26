@@ -24,7 +24,7 @@ display_administration_menu()
 
     echo "Please select an administrative task:"
     echo "1. Add/Configure a node"
-    echo "2. Add/Delete groups"
+    echo "2. Add/Delete groups vars"
     echo "3. Server Rollback"
     echo "5. View logs"
     echo "6. Vault Configuration"
@@ -33,12 +33,12 @@ display_administration_menu()
 
 # Function to view logs
 node_configuration() {
-    python subscripts/node_configuration.py
+    python3 subscripts/node_configuration.py
 }
 
 # Function to clear logs
 group_management() {
-    python subscripts/group_management.py
+    python3 subscripts/group_management.py
 }
 
 # Function to perform system update
@@ -99,4 +99,4 @@ administration_main() {
 }
 
 # Execute the administration script
-administration_main
+administration_main 

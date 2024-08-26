@@ -1,7 +1,7 @@
 import json
 import os
 import subprocess
-from group_management import call_main_functions
+from group_management import log_action
 
 CONFIG_FILE = '../inventories/dynamic/config.json'
 DYNAMIC_SCRIPT = '../inventories/dynamic/dynamic_inventory.sh'
@@ -60,7 +60,7 @@ def add_node(config):
     execute_dynamic_script()
     print(f"The node '{noeud}' has been successfully added with the JSON file '{json_file}'.")
     log_text = "The node " + noeud + " has been added"
-    call_main_functions("log_action", log_text)
+    log_action(log_text)
 
 
 def configure_node(config):
@@ -70,7 +70,7 @@ def configure_node(config):
     if not node:
         print("Node not found.")
         log_text = "Error while configuring the node " + noeud + " : Node not found"
-        call_main_functions("log_action", log_text)
+        log_action(log_text)
         return
 
     print("Leave blank to keep the current value.")
@@ -88,7 +88,7 @@ def configure_node(config):
     execute_dynamic_script()
     print(f"The node '{noeud}' has been successfully configured.")
     log_text = "The node " + noeud + " has been sucessfully configured"
-    call_main_functions("log_action", log_text)
+    log_action(log_text)
 
 
 def delete_node(config):
@@ -98,7 +98,7 @@ def delete_node(config):
     if not node:
         print("Node not found.")
         log_text = "Error while deleting the node " + noeud + " : Node not found"
-        call_main_functions("log_action", log_text)
+        log_action(log_text)
         return
 
     config['nodes'].remove(node)
@@ -113,7 +113,7 @@ def delete_node(config):
     execute_dynamic_script()
     print(f"The node '{noeud}' has been successfully deleted.")
     log_text = "The node " + noeud + " has been successfully deleted"
-    call_main_functions("log_action", log_text)
+    log_action(log_text)
 
 
 def main():
