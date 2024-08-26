@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source config.sh
-source logger.sh 
+source main_funcs.sh 
 
 
 
@@ -26,7 +26,6 @@ display_administration_menu()
     echo "1. Add/Configure a node"
     echo "2. Add/Delete groups"
     echo "3. Server Rollback"
-    echo "4. Servers Availability Check"
     echo "5. View logs"
     echo "6. Vault Configuration"
     echo "0. Return to main menu"

@@ -19,12 +19,12 @@ def generer_inventaire(json_file, noeud, groups):
     inventory = [f"[{noeud}]"]
 
     for group, hosts in group_dict.items():
-        inventory.append(f"[{noeud}:{group}]")
+        inventory.append(f"[{noeud}_{group}]")
         inventory.extend(hosts)
         inventory.append("")  # Ajouter une ligne vide entre les groupes
 
     inventory.append(f"[{noeud}:children]")
-    inventory.extend([f"{noeud}:{group}" for group in groups])
+    inventory.extend([f"{noeud}_{group}" for group in groups])
     inventory.append("")
 
     return inventory, group_dict
@@ -64,7 +64,7 @@ def main():
         os.makedirs(os.path.join(output_dir, 'group_vars'), exist_ok=True)
 
         for group, hosts in group_dict.items():
-            with open(os.path.join(output_dir, f'group_vars/{group.lower()}.ini'), 'w') as file:
+            with open(os.path.join(output_dir, f'group_vars/{group.lower()}.hosts'), 'w') as file:
                 file.write("\n".join(hosts))
 
         all_inventory.extend(inventory)
@@ -76,7 +76,7 @@ def main():
     with open('all.ini', 'w') as file:
         file.write("\n".join(all_inventory))
 
-    print("Les fichiers d'inventaire Ansible ont été générés avec succès pour tous les noeuds et l'inventaire total.")
+    print("Ansible inventory files were successfully generated for all nodes and total inventory.")
 
 if __name__ == "__main__":
     main()

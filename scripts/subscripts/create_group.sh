@@ -1,7 +1,7 @@
 #! /bin/bash
 
 source config.sh
-source logger.sh
+source main_funcs.sh
 
 
 
@@ -58,6 +58,8 @@ create_group() {
             echo "2- Group"
             echo "3- All servers"
             read -r -p "Your choice: " target
+
+            run_dynamic_inventory
 
             case $target in
                 1)
@@ -122,7 +124,7 @@ create_group() {
                         selected_group=$(echo "$groups" | awk -v choice=$choice '{print $choice}' | tr '[:upper:]' '[:lower:]')
                         echo $selected_group
                         echo "Deployment on $active_node $selected_group"
-                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/"$selected_group".ini "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
+                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/"$selected_group".hosts "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
                         log_action "Deployment of groups on $active_node $selected_group"
                     elif [[ $choice -eq $index ]]; then
                         echo "Deployment on all groups of $active_node"
@@ -139,7 +141,7 @@ create_group() {
                 3)
                     
                     #Action
-                    ansible-playbook -i "$INVENTORIES"/all.ini playbooks/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
+                    ansible-playbook -i "$INVENTORIES"/all.hosts playbooks/user_management/create.yaml --extra-vars "action=addgroup utilisateurs_groupes_file=$groups_file"
 
                     echo "Deployment successful"
                     log_action "Grpoups added on all servers"                         

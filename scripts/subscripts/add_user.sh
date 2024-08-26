@@ -1,7 +1,7 @@
 #! /bin/bash
 
 source config.sh
-source logger.sh
+source main_funcs.sh
 
 
 
@@ -63,6 +63,8 @@ deployer_user() {
             echo "2- Group"
             echo "3- All servers"
             read -r -p "Your choice: " target
+
+            run_dynamic_inventory
 
             case $target in
                 1)
@@ -127,7 +129,7 @@ deployer_user() {
                         selected_group=$(echo "$groups" | awk -v choice=$choice '{print $choice}' | tr '[:upper:]' '[:lower:]')
                         echo $selected_group
                         echo "Deployment on $active_node $selected_group"
-                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/"$selected_group".ini "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
+                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/"$selected_group".hosts "$PLAYBOOKS"/user_management/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
                         log_action "Deployment of users on $active_node $selected_group"
                     elif [[ $choice -eq $index ]]; then
                         echo "Deployment on all servers of $active_node"
@@ -142,7 +144,7 @@ deployer_user() {
                 3)
                     
                     #Action
-                    ansible-playbook -i "$INVENTORIES"/all.ini playbooks/user_management/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
+                    ansible-playbook -i "$INVENTORIES"/all.hosts playbooks/user_management/create.yaml --extra-vars "action=adduser utilisateurs_groupes_file=$user_groups_file"
                     log_action "Deployment of users on all servers"
                     echo "Deployment successful"
                     ;;

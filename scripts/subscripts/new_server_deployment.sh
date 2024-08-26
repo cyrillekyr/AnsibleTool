@@ -2,7 +2,7 @@
 
 # Deploy basic configurations on a new server
 source config.sh
-source logger.sh
+source main_funcs.sh
 
 
 #Deploy a machine
@@ -15,6 +15,8 @@ deployer_machine() {
     echo "2- Group"
     echo "3- All servers"
     read -r -p "Your choice: " target
+
+    run_dynamic_inventory
 
     case $target in
             1)
@@ -81,7 +83,7 @@ deployer_machine() {
                     if [[ $choice -ge 1 && $choice -le $num_groups ]]; then
                         selected_group=$(echo "$groups" | awk -v choice=$choice '{print $choice}' | tr '[:upper:]' '[:lower:]')
                         echo "Deployment on $active_node $selected_group" 
-                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/"$selected_group".ini "$PLAYBOOKS"/server_deployment/default.yaml
+                        ansible-playbook -i "$INVENTORIES"/nodes/"$active_node"/group_vars/"$selected_group".hosts "$PLAYBOOKS"/server_deployment/default.yaml
                         log_action "Default configurations deployed on $active_node $selected_group "
                     elif [[ $choice -eq $index ]]; then
                         echo "Deployment on all groups of $active_node"
@@ -96,7 +98,7 @@ deployer_machine() {
                 3)
                     
                     #Action
-                    ansible-playbook -i "$INVENTORIES"/all.ini "$PLAYBOOKS"/server_deployment/default.yaml
+                    ansible-playbook -i "$INVENTORIES"/all.hosts "$PLAYBOOKS"/server_deployment/default.yaml
                     log_action "Default configurations deployed all on servers"
 
                     echo "Deployment successful"

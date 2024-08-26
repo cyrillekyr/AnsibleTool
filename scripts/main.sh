@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source config.sh
-source logger.sh 
+source main_funcs.sh 
 
 
 
@@ -37,7 +37,7 @@ display_princal_menu()
     echo "6. Remove a machine"
     echo "7. Execute a playbook"
     echo "8. Dynamic inventory"
-    echo "9. Check machine availability"
+    echo "9. Server Availability check"
     echo "10. Administration"
     echo "0. Exit"
 
