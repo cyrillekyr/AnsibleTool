@@ -33,11 +33,11 @@ display_princal_menu()
     echo "2. Remove a user"
     echo "3. Create a group"
     echo "4. Delete a group"
-    echo "5. Deploy a machine"
+    echo "5. Deploy default server configurations"
     echo "6. Remove a machine"
     echo "7. Execute a playbook"
     echo "8. Dynamic inventory"
-    echo "9. Server Availability check"
+    echo "9. Servers Availability check"
     echo "10. Administration"
     echo "0. Exit"
 
@@ -57,7 +57,7 @@ execute_action()
     5) ./subscripts/new_server_deployment.sh ;;
     6) ./subscripts/remove_machine.sh ;;
     7) ./subscripts/execute_playbook.sh ;;
-    8) ./$INVENTORIES/dynamic/dynamic_inventory.sh ;;
+    8) ./"$INVENTORIES"/dynamic/dynamic_inventory.sh ;;
     9) ./check_availability.sh ;;
     10) ./subscripts/administration.sh ;;
     0) exit 0 ;;
